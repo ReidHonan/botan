@@ -328,7 +328,7 @@ class Command
          }
 
       /*
-      * The actual functionality of the cli command implemented in subclas
+      * The actual functionality of the cli command implemented in subclass
       */
       virtual void go() = 0;
 

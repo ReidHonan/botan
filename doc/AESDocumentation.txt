@@ -1,0 +1,47 @@
+AES algorithm documentation
+
+Like the RSA algorithm the AES algorithm is quite popular. In fact, it is trusted as a
+standard by the U.S. Government. It is largely considered to be resistant to all
+attacks, with the overall exception of brute forcing. The major difference between
+RSA and AES is that while RSA uses a public and private key system, AES uses a
+symmetric key system which means the same key for encrypting and decrypting.
+
+An example of the encryption can be found here: https://www.browserling.com/tools/aes-encrypt 
+
+An example of the decryption can be found here: https://www.browserling.com/tools/aes-decrypt
+
+Key Generation:
+
+An AES key is nothing except a string of random bits of the required length.
+For example 128-bit AES key = 16 bytes. These bytes can be any value the user wants,
+however it is recommended the user selects something which can’t be socially
+engineered but is memorable.
+
+
+Encryption/Decryption:
+The algorithm encrypts the message block by block. Typically of 16 bytes length each.
+To encrypt a message you must supply the message (or 16 bytes of it) and the key you
+wish to encrypt it with. The following process outlines how to encrypt the message,
+In order to decrypt the message one reverses the encryption process.
+1.	Key Expansion
+	a.	Each round uses a modified key, this modification is performed here.
+	b.	Each key that is generated is used for exactly 1 round.
+2.	Initial Round
+	a.	Add Round Key
+3.	Rounds (this is repeated multiple times dependant on the key length, 128 bit = 10 cycles, 192 bit = 12 cycles, 256 bit = 14 cycles.)
+	a.	Substitute Bytes
+		i.	Swap the bytes out based on the S-box.
+	b.	Shift Rows
+		i.	Move each row over by a set number of moves, with the blocks that get pushed off the edge added to the other side.
+			1.	For example:
+				a.	ABCD - Shift by 0 -> ABCD
+					EFGH - Shift by 1 -> HEFG
+					IJKL - Shift by 2 -> KLIJ
+					MNOP - Shift by 3 -> NOPM
+	c.	Mix Columns
+	d.	Add Round Key
+	e.	Loop
+4.	Final Round
+	a.	Sub bytes
+	b.	Shift Rows
+	c.	Add Round Key

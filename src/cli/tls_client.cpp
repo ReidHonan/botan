@@ -5,6 +5,13 @@
 * Botan is released under the Simplified BSD License (see license.txt)
 */
 
+/**
+*This file contains numerous functions that are seemingly dead code. These sections
+* are marked by a comment above them, and need to be investigated further. It is
+* currently unclear whether these functions are left over code or code yet to be
+* implemented.
+*/
+
 #include "cli.h"
 
 #if defined(BOTAN_HAS_TLS) && defined(BOTAN_TARGET_OS_HAS_SOCKETS)
@@ -38,15 +45,27 @@
 #include "credentials.h"
 
 namespace Botan_CLI {
-
+/**
+* This class is a local implementation of Transport Layer Security (TLS) Client,
+* It is designed to interact and work in conjunction with the TLS Server.
+*/
 class TLS_Client final : public Command, public Botan::TLS::Callbacks
    {
    public:
+   //specified below is the general default command to be used if the user doesn't specify
+   //any other paramters.
       TLS_Client() : Command("tls_client host --port=443 --print-certs --policy= "
                              "--tls1.0 --tls1.1 --tls1.2 "
                              "--session-db= --session-db-pass= --next-protocols= --type=tcp") {}
 
-      void go() override
+      /**
+	  *Should the user specify parameters, then the following override function
+	  * will update the variables with the user specified details.
+	  * it begins with setting all the variables to the correct values, before
+	  * configuring and establishing a socket connection to an instance of the 
+	  * Botan TLS Server.
+	  */
+	  void go() override
          {
          // TODO client cert auth
 
@@ -226,6 +245,11 @@ class TLS_Client final : public Command, public Botan::TLS::Callbacks
          }
 
    private:
+   /**
+   *This function handles all the different possible paths when connecting to 
+   * the TLS server. This function also contains all the error messages, handling 
+   * and correction. This is very similar to the TLS Server implementation.
+   */
       int connect_to_host(const std::string& host, uint16_t port, bool tcp)
          {
          addrinfo hints = {};
@@ -268,6 +292,10 @@ class TLS_Client final : public Command, public Botan::TLS::Callbacks
          return fd;
          }
 
+		 /**
+		 * This appears to be dead code, whether removed from previously working
+		 * code, or yet to implemented this code requires further review.
+		 */		 
       void tls_verify_cert_chain(
          const std::vector<Botan::X509_Certificate>& cert_chain,
          const std::vector<std::shared_ptr<const Botan::OCSP::Response>>& ocsp,
@@ -303,7 +331,11 @@ class TLS_Client final : public Command, public Botan::TLS::Callbacks
                std::cout << "Valid OCSP response for this server\n";
             }
          }
-
+		 
+		 /**
+		 * This appears to be dead code, whether removed from previously working
+		 * code, or yet to implemented this code requires further review.
+		 */	
       bool tls_session_established(const Botan::TLS::Session& session) override
          {
          output() << "Handshake complete, " << session.version().to_string()
@@ -330,6 +362,10 @@ class TLS_Client final : public Command, public Botan::TLS::Callbacks
          return true;
          }
 
+		 /**
+		 * This appears to be dead code, whether removed from previously working
+		 * code, or yet to implemented this code requires further review.
+		 */	
       static void dgram_socket_write(int sockfd, const uint8_t buf[], size_t length)
          {
          int r = send(sockfd, buf, length, MSG_NOSIGNAL);
@@ -338,6 +374,10 @@ class TLS_Client final : public Command, public Botan::TLS::Callbacks
             throw CLI_Error("Socket write failed errno=" + std::to_string(errno));
          }
 
+		 /**
+		 * This appears to be dead code, whether removed from previously working
+		 * code, or yet to implemented this code requires further review.
+		 */	
       void tls_emit_data(const uint8_t buf[], size_t length) override
          {
          size_t offset = 0;
@@ -359,11 +399,19 @@ class TLS_Client final : public Command, public Botan::TLS::Callbacks
             }
          }
 
+		 /**
+		 * This appears to be dead code, whether removed from previously working
+		 * code, or yet to implemented this code requires further review.
+		 */	
       void tls_alert(Botan::TLS::Alert alert) override
          {
          output() << "Alert: " << alert.type_string() << "\n";
          }
 
+		 /**
+		 * This appears to be dead code, whether removed from previously working
+		 * code, or yet to implemented this code requires further review.
+		 */	
       void tls_record_received(uint64_t /*seq_no*/, const uint8_t buf[], size_t buf_size) override
          {
          for(size_t i = 0; i != buf_size; ++i)

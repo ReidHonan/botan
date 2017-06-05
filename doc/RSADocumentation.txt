@@ -1,0 +1,40 @@
+RSA Algorithm Documentation
+
+Rivest-Shamir-Adleman encryption, also known as RSA encryption is one of many encryption algorithms
+which has grown into exceptional popularity. This encryption scheme is an example of public-key encryption,
+therefore requiring a different key to encrypt data as to decrypt data. These keys are based on prime numbers,
+which when operated upon can create a semiprime number.
+
+This algorithm is built on the idea that there currently exists no ‘efficient’ way 
+to factorise numbers using a classical (normal) computer. Using Shor’s Algorithm 
+on a Quantum Computer can result in an efficient and effective factorisation, however 
+this is still in development and as such is not currently operational.
+
+The RSA algorithm is represented by the following equations:
+
+Key Generation:
+
+•	Calculate n=pq, where ‘p’ and ‘q’ are two distinct primes to generate a ‘n’ of the required length.
+•	Compute φ(n)=(p-1)(q-1).
+•	Choose a public exponent ‘e’, 1 < e < φ(n), e must be coprime to φ(n), and gcd(e, φ(n)) = 1.
+•	Compute a private exponent ‘d’ that satisfies the following ed == 1(mod φ(n))
+•	Make the public key (n, e) available, keep the private values ‘d’, ‘p’, ‘q’, and φ(n) secret.
+
+
+Encryption
+
+	Ciphertext, c = RSAPublic(m) = m^(e) mod n, 1<m<n-1
+
+Decryption
+	Plaintext, m = RSAPrivate(c) = c^(d) mod n
+
+Signature Scheme
+	
+	Signature, s = RSAPrivate(m) = m^(d) mod n, 1 < m < n-1
+	Verification/check, v = RSAPublic(s) = s^(e) mod n.
+	
+	
+Notes
+	
+	It is worth noting that the transformations made by RSAPublic and RSAPrivate are inversible.
+	Meaning that m = RSAPublic(RSAPrivate(m)) = RSAPrivate(RSAPublic(m)) = m 

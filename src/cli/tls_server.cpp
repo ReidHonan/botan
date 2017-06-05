@@ -30,11 +30,21 @@
 
 namespace Botan_CLI {
 
+/**
+* This class is a local implementation of Transport Layer Security (TLS) Server,
+* It is designed to interact and work in conjunction with the TLS Client.
+*/
 class TLS_Server final : public Command
    {
    public:
+   //located here is the default command to be executed should the user fail to
+   // supply appropriate parameters.
       TLS_Server() : Command("tls_server cert key --port=443 --type=tcp --policy=") {}
 
+	  /**
+	  *The override function takes the supplied paramaters and utilises them to form
+	  * the server. This includes the setup and configuring of the TLS server.
+	  */
       void go() override
          {
          const std::string server_crt = get_arg("cert");
@@ -187,6 +197,11 @@ class TLS_Server final : public Command
             }
          }
    private:
+   /**
+   *This function is responsible for handling all issues associated with the 
+   * creation of the servers socket. This is very similar to the TLS Client
+   * implementation.
+   */
       int make_server_socket(bool is_tcp, uint16_t port)
          {
          const int type = is_tcp ? SOCK_STREAM : SOCK_DGRAM;
@@ -221,6 +236,10 @@ class TLS_Server final : public Command
          return fd;
          }
 
+		 /**
+		 *This function is responsible for ensuring that the connections to the
+		 * server are successful and that they meet the necessary requirements.
+		 */
       bool handshake_complete(const Botan::TLS::Session& session)
          {
          std::cout << "Handshake complete, " << session.version().to_string()
@@ -235,6 +254,10 @@ class TLS_Server final : public Command
          return true;
          }
 
+		 /**
+		 *This function is used to write to the socket, this write protocol is
+		 * only used when the connection IS NOT tcp.
+		 */
       static void dgram_socket_write(int sockfd, const uint8_t buf[], size_t length)
          {
          ssize_t sent = ::send(sockfd, buf, length, MSG_NOSIGNAL);
@@ -245,6 +268,10 @@ class TLS_Server final : public Command
             std::cout << "Packet of length " << length << " truncated to " << sent << std::endl;
          }
 
+		 /**
+		 *This function is used to write to the socket, this write protocol is
+		 * only used when the connection IS tcp.
+		 */
       static void stream_socket_write(int sockfd, const uint8_t buf[], size_t length)
          {
          while(length)
@@ -264,6 +291,10 @@ class TLS_Server final : public Command
             }
          }
 
+		 /**
+		 * This function is responsible for listening to the server socket and
+		 * reporting back when there is a connection present.
+		 */
       void alert_received(Botan::TLS::Alert alert, const uint8_t[], size_t)
          {
          std::cout << "Alert: " << alert.type_string() << std::endl;

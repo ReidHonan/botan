@@ -5,6 +5,11 @@
 * Botan is released under the Simplified BSD License (see license.txt)
 */
 
+/**
+*For further explanation of the paramters specified below please consult the manual,
+*specificly the "cli.rst" file which outlines the paramters in more detail.
+*/
+
 #include "cli.h"
 
 #if defined(BOTAN_HAS_PUBLIC_KEY_CRYPTO)
@@ -26,14 +31,24 @@
 
 namespace Botan_CLI {
 
+/**
+*This class is responsible for generating the key pair dependant on the command given 
+*--algo = algorithm to generate the key for.
+*--passphrase = passphrase to encrypt the key with
+*--params = algorithm specific parameters
+*--pbe-millis = milliseconds to generate an encryption key from the passphrase
+*/
 class PK_Keygen final : public Command
    {
    public:
+   //The default command is specified between the brackets below.
       PK_Keygen() : Command("keygen --algo=RSA --params= --passphrase= --pbe= --pbe-millis=300 --der-out") {}
 
+	  //This method overrides the defaults specified above, 
       void go() override
          {
          const std::string algo = get_arg("algo");
+		 
          const std::string params = get_arg("params");
 
          std::unique_ptr<Botan::Private_Key>
@@ -90,12 +105,23 @@ std::string algo_default_emsa(const std::string& key)
    }
 
 }
-
+/**
+* This class is responsible for the digital signatures dependant on the command given.
+*--passphrase = phrase used to encrypt, if the key is encrypted
+	this must be sent as "pass-in".
+*--hash = the hash function used.
+*--emsa = specifies the signature scheme.
+*--key = private key to sign the file with. 
+*--file = file to be signed
+*/
 class PK_Sign final : public Command
    {
    public:
+   //Here is the default command to be used if the user fails to specify anything different
       PK_Sign() : Command("sign --passphrase= --hash=SHA-256 --emsa= key file") {}
 
+	  //The following command overrides the previous command, executing the command
+	  //as instructed.
       void go() override
          {
          std::unique_ptr<Botan::Private_Key> key(Botan::PKCS8::load_key(get_arg("key"),
@@ -119,11 +145,24 @@ class PK_Sign final : public Command
 
 BOTAN_REGISTER_COMMAND("sign", PK_Sign);
 
+/**
+*This class is responsible for verifying the keys are the correct keys.
+*If given the correct parameters this section will verify keys generated from
+*all locations.
+*--hash = the hash used in the scheme.
+*--file = the file to verify.
+*--pubkey = the public key to verify.
+*--signature = the signature to verify.
+*--emsa = the signature scheme
+*/
 class PK_Verify final : public Command
    {
    public:
+   //The default command for this class. Used unless an override is specified.
       PK_Verify() : Command("verify --hash=SHA-256 --emsa= pubkey file signature") {}
 
+	  //This function overrides the default command and substitutes the user
+	  //provided parameters.
       void go() override
          {
          std::unique_ptr<Botan::Public_Key> key(Botan::X509::load_key(get_arg("pubkey")));
@@ -150,6 +189,10 @@ BOTAN_REGISTER_COMMAND("verify", PK_Verify);
 
 #if defined(BOTAN_HAS_ECC_GROUP)
 
+/**
+*This class is responsible for the Elliptic Curve encryption. More specifically this
+*function provides the raw parameters for it.
+*/
 class EC_Group_Info final : public Command
    {
    public:
@@ -181,6 +224,10 @@ BOTAN_REGISTER_COMMAND("ec_group_info", EC_Group_Info);
 
 #if defined(BOTAN_HAS_DL_GROUP)
 
+/**
+*This function is responsible for the Diffie-Hellman encryption. More specificly this
+*function provides the raw parameters for it.
+*/
 class DL_Group_Info final : public Command
    {
    public:
@@ -204,7 +251,9 @@ class DL_Group_Info final : public Command
    };
 
 BOTAN_REGISTER_COMMAND("dl_group_info", DL_Group_Info);
-
+/**
+*This class generates the group paramters for the Diffie-Hellman encryption.
+*/
 class Gen_DL_Group final : public Command
    {
    public:

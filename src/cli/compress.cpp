@@ -19,9 +19,11 @@ class Compress final : public Command
    public:
       Compress() : Command("compress --type=gzip --level=6 --buf-size=8192 file") {}
 
+	  //define what the file type of the compressed file will be.
       std::string output_filename(const std::string& input_fsname,
                                   const std::string& comp_type)
          {
+			 //here are the 8 different supported extensions.
          const std::map<std::string, std::string> suffixes = {
             { "zlib", "zlib" },
             { "gzip", "gz" },
